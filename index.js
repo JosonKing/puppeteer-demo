@@ -1,3 +1,4 @@
+const PageUtils = require('./util/PageUtils');
 const puppeteer = require('puppeteer');
 const fs = require('fs');
 
@@ -5,7 +6,8 @@ function getContent(page) {
   (async () => {
     try {
       // 使用css选择器的方式
-      let content = await page.$eval('div.indent', el => el.innerText);
+      let content = await page.$eval('.ie-fix', el => el.innerText);
+      // let content = await page.$eval('#pageNo-1 > div.reader-parent-3c3fd258f7ec4afe05a1df15 > div.reader-wrap3c3fd258f7ec4afe05a1df15 > div.reader-main-3c3fd258f7ec4afe05a1df15 > div.reader-txt-layer > div.ie-fix', el => el.innerText);
       console.log(content);
 
       // 写入文件内容（如果文件不存在会创建一个文件）
@@ -49,7 +51,7 @@ function getContent(page) {
       page.setJavaScriptEnabled(true),
       // 设置页面视口的大小
       page.setViewport({
-        width: 1100,
+        width: 1920,
         height: 1080
       }),
     ]);
@@ -80,25 +82,47 @@ function getContent(page) {
     // let content = await page.$eval('table.itemlist > tbody', el => el.innerText);
     // console.log(content);
 
+    //   // 地址
+    //   let url = `https://book.douban.com/top250?icn=index-book250-all`
+    //   // await page.click('.fc2e');
+    //   // 打开章节列表
+    //   await page.goto(url);
+
+    //   await getContent(page);
+
+    //   await page.waitFor(4000)
+
+    //   await (async () => {
+    //     for (let i = 0; i < 9; i++) {
+    //       await page.click('.next');
+
+    //       await page.waitFor(4000)
+
+    //       await getContent(page);
+    //     }
+    //   })()
+
+    // } catch (error) {
+    //   console.log(error)
+    // }
+
     // 地址
-    let url = `https://book.douban.com/top250?icn=index-book250-all`
-    // await page.click('.fc2e');
+    let url = `https://wenku.baidu.com/view/8b817c43bceb19e8b9f6ba19.html`
+
+
     // 打开章节列表
     await page.goto(url);
 
-    await getContent(page);
+    await page.waitFor(4000)
+    await page.click('.fc2e');
 
     await page.waitFor(4000)
 
-    await (async () => {
-      for (let i = 0; i < 9; i++) {
-        await page.click('.next');
+    await PageUtils.getContent(page, '.ie-fix', {
+      write: true
+    });
 
-        await page.waitFor(4000)
-
-        await getContent(page);
-      }
-    })()
+    await page.waitFor(4000)
 
   } catch (error) {
     console.log(error)
